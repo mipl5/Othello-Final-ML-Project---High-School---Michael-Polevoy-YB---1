@@ -1,62 +1,52 @@
 import random
-import copy
 import numpy as np
+import csv
 
 class Game:
     def __init__(self, size=6):
         self.size = size
         self.board = np.zeros((size, size), dtype=int)
-        self.winner = None
         self.init_board()
     
     def init_board(self):
-        # 1 - Black, -1 - White
         mid = self.size // 2
-        self.board[mid-1, mid-1] = -1
-        self.board[mid, mid] = -1
-        self.board[mid-1, mid] = 1
-        self.board[mid, mid-1] = 1
-        
-    def play(self):
-        player = 1 # always black starts the game
+        self.board[mid-1, mid-1], self.board[mid, mid] = -1, -1
+        self.board[mid-1, mid], self.board[mid, mid-1] = 1, 1
+    
+    def is_valid_move(self, r, c, player):
+        if self.board[r, c] != 0: return False
+        directions = [(-1,-1), (-1,0), (-1,1), (0,-1), (0,1), (1,-1), (1,0), (1,1)]
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < self.size and 0 <= nc < self.size and self.board[nr, nc] == -player:
+                nr += dr; nc += dc
+                while 0 <= nr < self.size and 0 <= nc < self.size:
+                    if self.board[nr, nc] == player: return True
+                    if self.board[nr, nc] == 0: break
+                    nr += dr; nc += dc
+        return False
 
-    def make_move(self, player):
-        # ...
+    def get_valid_moves(self, player):
+        return [(r, c) for r in range(self.size) for c in range(self.size) if self.is_valid_move(r, c, player)]
 
-    def check_winner(self):
-        # ...
+    def make_move(self, r, c, player):
+        if not self.is_valid_move(r, c, player): return
+        self.board[r, c] = player
+        directions = [(-1,-1), (-1,0), (-1,1), (0,-1), (0,1), (1,-1), (1,0), (1,1)]
+        for dr, dc in directions:
+            to_flip = []
+            nr, nc = r + dr, c + dc
+            while 0 <= nr < self.size and 0 <= nc < self.size and self.board[nr, nc] == -player:
+                to_flip.append((nr, nc))
+                nr += dr; nc += dc
+            if to_flip and 0 <= nr < self.size and 0 <= nc < self.size and self.board[nr, nc] == player:
+                for fr, fc in to_flip: self.board[fr, fc] = player
 
-    def perform_agent_move(self):
-        self.make(1) # later I will use model to make a move, now random
 
-    def perform_rival_move(self):
-        self.make(-1)
-
-    def print_game_result(self):
-        black_count = np.sum(self.board == 1)
-        white_count = np.sum(self.board == -1)
-        print(f'Black: {black_count}, White: {white_count}')
-        if black_count > white_count:
-            print(f'Black wins! {black_count} vs {white_count}')
-        elif white_count > black_count:
-            print(f'White wins! {black_count} vs {white_count}')
-        else:
-            print(f'Draw! {black_count} vs {white_count}')
-
-    def get_board_state(self):
-        return copy.deepcopy(self.board)
 
     def print_board(self):
-        symbols = {0: '.', 1: 'B', -1:'W'}
-        for row in range(self.size):
-            print(' '.join([symbols[self.board[row, col]] for col in range(self.size)]))
+        symbols = {0: '.', 1: 'B', -1: 'W'}
+        print("  " + " ".join(map(str, range(self.size))))
+        for i, row in enumerate(self.board):
+            print(f"{i} " + " ".join([symbols[x] for x in row]))
         print()
-
-    def calculate_board_scores(self):
-        # because there are only values
-        # 1 and -1, I can just sum the board to 
-        # get the score
-        return np.sum(self.board)
-
-    def get_free_cells(self):
-        return list(zip(*np.where(self.board == 0)))
