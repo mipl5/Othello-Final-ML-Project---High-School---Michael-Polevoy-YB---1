@@ -8,13 +8,17 @@ class Tournament:
         self.size = size
         self.gamma = discount
         self.data_log = []
+        self.black_wins = 0
+        self.white_wins = 0
+        self.draws = 0
+        self.total_games = 0
 
     def play_games(self, count=1):
         for g_id in range(count):
             game = Game(self.size)
             turns = []
             print(f"=== NEW TOURNAMENT GAME: {g_id + 1} ===")
-            game.print_board()
+            #game.print_board()
 
             current_player = 1
             
@@ -36,11 +40,29 @@ class Tournament:
                 else:
                     print(f"Rival (W) places at: ({r}, {c})")
 
-                game.print_board()
+                #game.print_board()
                 current_player = -current_player
             
             winner = self._get_winner(game)
+            self.total_games += 1
+            if winner == 1:
+                self.black_wins += 1
+            elif winner == -1:
+                self.white_wins += 1
+            else:
+                self.draws += 1
+                
             self._process_history(g_id, turns, winner)
+
+        if self.total_games > 0:
+            win_rate_black = (self.black_wins / self.total_games) * 100
+            print("\n=== TOURNAMENT SUMMARY ===")
+            print(f"Total Games:  {self.total_games}")
+            print(f"Black Wins:   {self.black_wins}")
+            print(f"White Wins:   {self.white_wins}")
+            print(f"Draws:        {self.draws}")
+            print(f"Black Winrate: {win_rate_black:.2f}%")
+            print("==========================\n")
 
     def _get_winner(self, game):
         black = np.sum(game.board == 1)
