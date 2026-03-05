@@ -58,7 +58,6 @@ class Tournament:
             else:
                 base = 1.0 if player == winner else 0.0
             
-            # Recursive discount logic
             score = base * (self.gamma ** i)
             self.data_log.append({
                 'game_id': g_id, 

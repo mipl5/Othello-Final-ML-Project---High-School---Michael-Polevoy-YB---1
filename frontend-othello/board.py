@@ -63,6 +63,15 @@ class Board:
 
         return flips
 
+    def get_valid_moves(self, color):
+        valid_moves = []
+        for r in range(BOARD_SIZE):
+            for c in range(BOARD_SIZE):
+                if self.grid[r][c].is_empty():
+                    if self.get_flips(r, c, color):
+                        valid_moves.append((r, c))
+        return valid_moves
+
     def get_counts(self):
         black_count = 0
         white_count = 0
