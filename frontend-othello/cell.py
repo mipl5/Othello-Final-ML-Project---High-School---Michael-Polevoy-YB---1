@@ -1,5 +1,5 @@
 import pygame
-from constants import CELL_SIZE, GREEN, GRID_COLOR
+from constants import CELL_SIZE, GREEN, GRID_COLOR, HEADER_HEIGHT
 
 class Cell:
     def __init__(self, row, col):
@@ -15,7 +15,7 @@ class Cell:
 
     def draw(self, surface):
         x = self.col * CELL_SIZE
-        y = self.row * CELL_SIZE
+        y = self.row * CELL_SIZE + HEADER_HEIGHT
 
         rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
 

@@ -63,6 +63,18 @@ class Board:
 
         return flips
 
+    def get_counts(self):
+        black_count = 0
+        white_count = 0
+        for row in self.grid:
+            for cell in row:
+                if not cell.is_empty():
+                    if cell.piece.color == BLACK:
+                        black_count += 1
+                    else:
+                        white_count += 1
+        return black_count, white_count
+
     def make_move(self, row, col, color):
         cell = self.grid[row][col]
 
