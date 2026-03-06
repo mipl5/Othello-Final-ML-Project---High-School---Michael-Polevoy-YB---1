@@ -4,16 +4,17 @@ from constants import BOARD_SIZE, BLACK, WHITE
 import os
 
 class AIAgent:
-    def __init__(self, model_path):
+    def __init__(self, model_path, color=WHITE):
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model file not found at {model_path}")
         self.model = tf.keras.models.load_model(model_path)
+        self.color = color
 
     def get_move(self, board):
         valid_moves = []
         for r in range(BOARD_SIZE):
             for c in range(BOARD_SIZE):
-                flips = board.get_flips(r, c, BLACK)
+                flips = board.get_flips(r, c, self.color)
                 if flips and board.grid[r][c].is_empty():
                     valid_moves.append((r, c))
 
@@ -42,7 +43,7 @@ class AIAgent:
             for c in range(BOARD_SIZE):
                 cell = board.grid[r][c]
                 if not cell.is_empty():
-                    if cell.piece.color == BLACK:
+                    if cell.piece.color == self.color:
                         state[r, c] = 1
                     else:
                         state[r, c] = -1
