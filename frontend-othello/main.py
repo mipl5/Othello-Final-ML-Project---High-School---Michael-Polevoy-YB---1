@@ -32,7 +32,7 @@ running = True
 
 font = pygame.font.SysFont('Arial', 32, bold=True)
 
-def draw_status(surface, board, current_player):
+def draw_status(surface, board, current_player, agent):
     black_count, white_count = board.get_counts()
     
     pygame.draw.rect(surface, (50, 50, 50), (0, 0, WINDOW_WIDTH, HEADER_HEIGHT))
@@ -46,6 +46,17 @@ def draw_status(surface, board, current_player):
     surface.blit(black_text, (20, 10))
     surface.blit(white_text, (WINDOW_WIDTH - white_text.get_width() - 20, 10))
     surface.blit(turn_text, (WINDOW_WIDTH // 2 - turn_text.get_width() // 2, 10))
+    
+    diff_font = pygame.font.SysFont('Arial', 14, bold=True)
+    diffs = [(1.0, "100%"), (0.75, "75%"), (0.5, "50%"), (0.25, "25%")]
+    start_x = 10
+    for diff_val, label in diffs:
+        color = (0, 150, 0) if agent.difficulty == diff_val else (100, 100, 100)
+        btn_rect = pygame.Rect(start_x, 45, 40, 25)
+        pygame.draw.rect(surface, color, btn_rect, border_radius=4)
+        txt = diff_font.render(label, True, (255, 255, 255))
+        surface.blit(txt, (btn_rect.centerx - txt.get_width() // 2, btn_rect.centery - txt.get_height() // 2))
+        start_x += 45
     
     reset_font = pygame.font.SysFont('Arial', 24, bold=True)
     reset_text = reset_font.render("Reset", True, (255, 255, 255))
@@ -95,6 +106,15 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             
+            # Check difficulty buttons
+            diffs = [(1.0, "100%"), (0.75, "75%"), (0.5, "50%"), (0.25, "25%")]
+            start_x = 10
+            for diff_val, label in diffs:
+                btn_rect = pygame.Rect(start_x, 45, 40, 25)
+                if btn_rect.collidepoint(x, y):
+                    agent.difficulty = diff_val
+                start_x += 45
+
             # Check reset button click
             reset_rect = pygame.Rect(WINDOW_WIDTH // 2 - 40, 45, 80, 30)
             if reset_rect.collidepoint(x, y):
@@ -119,7 +139,7 @@ while running:
 
     screen.fill(GREEN)
     board.draw(screen)
-    draw_status(screen, board, current_player)
+    draw_status(screen, board, current_player, agent)
 
     if game_over:
         black_count, white_count = board.get_counts()
