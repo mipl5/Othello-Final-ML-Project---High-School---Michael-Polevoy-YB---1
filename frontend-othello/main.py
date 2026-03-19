@@ -32,9 +32,15 @@ def draw_status(surface, board, current_player):
     turn_color = "Black's" if current_player == BLACK else "White's"
     turn_text = font.render(f"{turn_color} Turn", True, (255, 215, 0))
     
-    surface.blit(black_text, (20, HEADER_HEIGHT // 2 - black_text.get_height() // 2))
-    surface.blit(white_text, (WINDOW_WIDTH - white_text.get_width() - 20, HEADER_HEIGHT // 2 - white_text.get_height() // 2))
-    surface.blit(turn_text, (WINDOW_WIDTH // 2 - turn_text.get_width() // 2, HEADER_HEIGHT // 2 - turn_text.get_height() // 2))
+    surface.blit(black_text, (20, 10))
+    surface.blit(white_text, (WINDOW_WIDTH - white_text.get_width() - 20, 10))
+    surface.blit(turn_text, (WINDOW_WIDTH // 2 - turn_text.get_width() // 2, 10))
+    
+    reset_font = pygame.font.SysFont('Arial', 24, bold=True)
+    reset_text = reset_font.render("Reset", True, (255, 255, 255))
+    reset_rect = pygame.Rect(WINDOW_WIDTH // 2 - 40, 45, 80, 30)
+    pygame.draw.rect(surface, (200, 0, 0), reset_rect, border_radius=5)
+    surface.blit(reset_text, (reset_rect.centerx - reset_text.get_width() // 2, reset_rect.centery - reset_text.get_height() // 2))
 
 ai_think_timer = 0
 game_over = False
@@ -75,21 +81,30 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN and current_player == BLACK and not game_over:
-
+        if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             
-            y -= HEADER_HEIGHT
+            # Check reset button click
+            reset_rect = pygame.Rect(WINDOW_WIDTH // 2 - 40, 45, 80, 30)
+            if reset_rect.collidepoint(x, y):
+                board = Board()
+                current_player = BLACK
+                ai_think_timer = 0
+                game_over = False
+                continue
 
-            if y >= 0:
-                col = x // CELL_SIZE
-                row = y // CELL_SIZE
+            if current_player == BLACK and not game_over:
+                y -= HEADER_HEIGHT
 
-                if board.make_move(row, col, BLACK):
-                    if board.get_valid_moves(WHITE):
-                        current_player = WHITE
-                    elif not board.get_valid_moves(BLACK):
-                        game_over = True
+                if y >= 0:
+                    col = x // CELL_SIZE
+                    row = y // CELL_SIZE
+
+                    if board.make_move(row, col, BLACK):
+                        if board.get_valid_moves(WHITE):
+                            current_player = WHITE
+                        elif not board.get_valid_moves(BLACK):
+                            game_over = True
 
     screen.fill(GREEN)
     board.draw(screen)

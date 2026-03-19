@@ -1,0 +1,14 @@
+Layers,Activations,Optimizer,Loss_Function,Epochs,Final_Loss
+64 -> 32 -> 1,relu -> relu -> sigmoid,adam,mse,100,0.0402
+16 -> 8 -> 1,relu -> relu -> sigmoid,adam,mse,50,0.0400
+16 -> 8 -> 1,relu -> relu -> sigmoid,adam,mse,50,0.0394
+128 -> 64 -> 32 -> 1,relu -> relu -> relu -> sigmoid,adam,mse,150,0.0385
+32 -> 16 -> 1,tanh -> tanh -> sigmoid,sgd,mse,200,0.0450
+16 -> 16 -> 1,relu -> relu -> sigmoid,rmsprop,binary_crossentropy,50,0.0411
+64 -> 32 -> 16 -> 1,leaky_relu -> leaky_relu -> leaky_relu -> sigmoid,adam,mse,100,0.0379
+128 -> 128 -> 1,relu -> relu -> sigmoid,adam,mse,50,0.0390
+64 -> 64 -> 64 -> 1,relu -> relu -> relu -> sigmoid,adam,mse,75,0.0382
+32 -> 32 -> 1,relu -> relu -> sigmoid,adam,mse,120,0.0395
+128 -> 64 -> 1,relu -> relu -> sigmoid,adam,mse,60,0.0405
+16 -> 8 -> 4 -> 1,relu -> relu -> relu -> sigmoid,adam,mse,40,0.0415
+256 -> 128 -> 64 -> 1,relu -> relu -> relu -> sigmoid,adam,mse,200,0.0375
