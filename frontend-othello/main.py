@@ -3,8 +3,19 @@ from board import Board
 from constants import *
 from ai_agent import AIAgent
 import os
+import platform
 
+if platform.system() == "Windows":
+    import ctypes
+    # arbitrary string that tells windows this is a separate app from Python
+    myappid = 'micha.othello.game.final'
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 pygame.init()
+
+icon_path = os.path.join(os.path.dirname(__file__), 'images', 'othello_game_logo.png')
+if os.path.exists(icon_path):
+    icon = pygame.image.load(icon_path)
+    pygame.display.set_icon(icon)
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Othello (You: Black, AI: White)")
