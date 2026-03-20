@@ -287,7 +287,8 @@ while running:
             go_text = go_font.render(msg, True, (255, 0, 0))
             shadow = go_font.render(msg, True, (0, 0, 0))
             screen.blit(shadow, (WINDOW_WIDTH // 2 - go_text.get_width() // 2 + 2, WINDOW_HEIGHT // 2 - go_text.get_height() // 2 + 2))
-            screen.blit(go_text, (WINDOW_WIDTH // 2 - go_text.get_width() // 2, WINDOW_HEIGHT // 2 - go_text.get_height() // 2))
+            screen.blit(go_text, (WINDOW_WIDTH // 2 - go_text.get_width() //
+             2, WINDOW_HEIGHT // 2 - go_text.get_height() // 2))
 
         pygame.display.flip()
 
