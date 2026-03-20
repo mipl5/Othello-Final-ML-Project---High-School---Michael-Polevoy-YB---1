@@ -7,7 +7,7 @@ import platform
 
 if platform.system() == "Windows":
     import ctypes
-    # arbitrary string that tells windows this is a separate app from Python
+    # arbitrary string that tells windows this is a separate app from Python to show the icon also on taskbar
     myappid = 'micha.othello.game.final'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 pygame.init()
@@ -18,7 +18,7 @@ if os.path.exists(icon_path):
     pygame.display.set_icon(icon)
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("Othello (You: Black, AI: White)")
+pygame.display.set_caption("Othello")
 
 bg_path = os.path.join(os.path.dirname(__file__), 'images', 'othello_background.jpg')
 if os.path.exists(bg_path):
