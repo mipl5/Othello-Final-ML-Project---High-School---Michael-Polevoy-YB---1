@@ -11,7 +11,20 @@ if platform.system() == "Windows":
     myappid = 'micha.othello.game.final'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 pygame.init()
+pygame.mixer.init()
 
+intro_sound_path = os.path.join(os.path.dirname(__file__), 'sound_effects', 'game_intro_sound.mp3')
+start_sound_path = os.path.join(os.path.dirname(__file__), 'sound_effects', 'game_start_sound.mp3')
+
+intro_sound = None
+start_sound = None
+
+if os.path.exists(intro_sound_path):
+    intro_sound = pygame.mixer.Sound(intro_sound_path)
+    intro_sound.play()
+
+if os.path.exists(start_sound_path):
+    start_sound = pygame.mixer.Sound(start_sound_path)
 icon_path = os.path.join(os.path.dirname(__file__), 'images', 'othello_game_logo.png')
 if os.path.exists(icon_path):
     icon = pygame.image.load(icon_path)
@@ -186,6 +199,8 @@ while running:
                         ai_think_timer = 0
                         game_over = False
                         game_state = STATE_PLAYING
+                        if start_sound:
+                            start_sound.play()
 
     elif game_state == STATE_MULTIPLAYER_MENU:
         find_rect, back_rect = draw_multiplayer_menu(screen)
