@@ -70,6 +70,7 @@ game_over = False
 STATE_MENU = 0
 STATE_DIFFICULTY = 1
 STATE_PLAYING = 2
+STATE_MULTIPLAYER_MENU = 3
 game_state = STATE_MENU
 
 def draw_menu(surface):
@@ -84,8 +85,8 @@ def draw_menu(surface):
     btn_font = pygame.font.SysFont('Arial', 24, bold=True)
     
     h_rect = pygame.Rect(WINDOW_WIDTH // 2 - 120, 200, 240, 50)
-    pygame.draw.rect(surface, (100, 100, 100), h_rect, border_radius=10)
-    h_text = btn_font.render("Play Vs Human", True, (200, 200, 200))
+    pygame.draw.rect(surface, (128, 0, 128), h_rect, border_radius=10)
+    h_text = btn_font.render("Play Vs Human", True, (255, 255, 255))
     surface.blit(h_text, (h_rect.centerx - h_text.get_width() // 2, h_rect.centery - h_text.get_height() // 2))
     
     ai_rect = pygame.Rect(WINDOW_WIDTH // 2 - 120, 280, 240, 50)
@@ -114,7 +115,38 @@ def draw_difficulty_menu(surface):
         rects.append((rect, diff_val))
         start_y += 60
         
-    return rects
+    back_rect = pygame.Rect(WINDOW_WIDTH // 2 - 50, WINDOW_HEIGHT - 60, 100, 40)
+    pygame.draw.rect(surface, (200, 50, 50), back_rect, border_radius=10)
+    btn_font_small = pygame.font.SysFont('Arial', 18, bold=True)
+    back_text = btn_font_small.render("Back", True, (255, 255, 255))
+    surface.blit(back_text, (back_rect.centerx - back_text.get_width() // 2, back_rect.centery - back_text.get_height() // 2))
+        
+    return rects, back_rect
+
+def draw_multiplayer_menu(surface):
+    if menu_bg:
+        surface.blit(menu_bg, (0, 0))
+    else:
+        surface.fill(GREEN)
+    
+    title_font = pygame.font.SysFont('Arial', 48, bold=True)
+    title_text = title_font.render("MULTIPLAYER", True, (255, 255, 255))
+    surface.blit(title_text, (WINDOW_WIDTH // 2 - title_text.get_width() // 2, 80))
+    
+    btn_font = pygame.font.SysFont('Arial', 24, bold=True)
+    
+    find_rect = pygame.Rect(WINDOW_WIDTH // 2 - 120, 200, 240, 50)
+    pygame.draw.rect(surface, (255, 255, 0), find_rect, border_radius=10)
+    find_text = btn_font.render("Find Opponent", True, (0, 0, 0))
+    surface.blit(find_text, (find_rect.centerx - find_text.get_width() // 2, find_rect.centery - find_text.get_height() // 2))
+    
+    back_rect = pygame.Rect(WINDOW_WIDTH // 2 - 50, WINDOW_HEIGHT - 60, 100, 40)
+    pygame.draw.rect(surface, (200, 50, 50), back_rect, border_radius=10)
+    btn_font_small = pygame.font.SysFont('Arial', 18, bold=True)
+    back_text = btn_font_small.render("Back", True, (255, 255, 255))
+    surface.blit(back_text, (back_rect.centerx - back_text.get_width() // 2, back_rect.centery - back_text.get_height() // 2))
+    
+    return find_rect, back_rect
 
 while running:
 
@@ -131,10 +163,11 @@ while running:
                 x, y = pygame.mouse.get_pos()
                 if ai_rect.collidepoint(x, y):
                     game_state = STATE_DIFFICULTY
-                # h_rect does nothing for now
+                elif h_rect.collidepoint(x, y):
+                    game_state = STATE_MULTIPLAYER_MENU
                 
     elif game_state == STATE_DIFFICULTY:
-        rects = draw_difficulty_menu(screen)
+        rects, back_rect = draw_difficulty_menu(screen)
         pygame.display.flip()
         
         for event in pygame.event.get():
@@ -142,6 +175,9 @@ while running:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
+                if back_rect.collidepoint(x, y):
+                    game_state = STATE_MENU
+                    continue
                 for rect, diff_val in rects:
                     if rect.collidepoint(x, y):
                         agent.difficulty = diff_val
@@ -150,6 +186,18 @@ while running:
                         ai_think_timer = 0
                         game_over = False
                         game_state = STATE_PLAYING
+
+    elif game_state == STATE_MULTIPLAYER_MENU:
+        find_rect, back_rect = draw_multiplayer_menu(screen)
+        pygame.display.flip()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if back_rect.collidepoint(x, y):
+                    game_state = STATE_MENU
 
     elif game_state == STATE_PLAYING:
 
